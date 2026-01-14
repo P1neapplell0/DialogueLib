@@ -9,19 +9,19 @@ You can:
 *   Send specified request codes to the server
 
 For **custom** entity usage examples, refer to:  
-[TuDiGong Entity](https://github.com/GaylordFockerCN/TuDiGong/blob/main/src/main/java/com/p1nero/tudigong/entity/TudiGongEntity.java)
+[TuDiGong Entity](https://github.com/P1neapplell0/TuDiGong/blob/main/src/main/java/com/p1nero/tudigong/entity/TudiGongEntity.java)
 
-[ExampleEntity.java](https://github.com/GaylordFockerCN/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/entity/ExampleEntity.java)
+[ExampleEntity.java](https://github.com/P1neapplell0/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/entity/ExampleEntity.java)
 
 For **existing** entity usage examples, refer to:
 
-[IEntityDialogueExtension](https://github.com/GaylordFockerCN/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/api/IEntityDialogueExtension.java)
+[IEntityDialogueExtension](https://github.com/P1neapplell0/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/api/IEntityDialogueExtension.java)
 
-[ReceptionistDialogExtension](https://github.com/GaylordFockerCN/BountifulNpc/blob/1.20.1/src/main/java/com/p1nero/bountiful_npc/dialog/ReceptionistDialogExtension.java)
+[ReceptionistDialogExtension](https://github.com/P1neapplell0/BountifulNpc/blob/1.20.1/src/main/java/com/p1nero/bountiful_npc/dialog/ReceptionistDialogExtension.java)
 
 You can also use datagen to generate dialog translation:
 
-[ExampleLangProvider](https://github.com/GaylordFockerCN/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/data/ExampleLangProvider.java)
+[ExampleLangProvider](https://github.com/P1neapplell0/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/data/ExampleLangProvider.java)
 
 This mod extends the Valkyrie dialogue system from TheAether, adding:
 
