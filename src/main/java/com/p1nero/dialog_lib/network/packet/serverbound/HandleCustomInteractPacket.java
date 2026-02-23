@@ -23,7 +23,7 @@ public record HandleCustomInteractPacket(String modId, int interactionID) implem
     @Override
     public void execute(@Nullable Player player) {
         if (player instanceof ServerPlayer serverPlayer) {
-            ServerCustomInteractEvent event = new ServerCustomInteractEvent(serverPlayer, interactionID);
+            ServerCustomInteractEvent event = new ServerCustomInteractEvent(serverPlayer, interactionID, modId);
             MinecraftForge.EVENT_BUS.post(event);
         }
     }

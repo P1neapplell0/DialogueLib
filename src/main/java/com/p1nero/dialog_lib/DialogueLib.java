@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 @Mod(DialogueLib.MOD_ID)
 public class DialogueLib {
 

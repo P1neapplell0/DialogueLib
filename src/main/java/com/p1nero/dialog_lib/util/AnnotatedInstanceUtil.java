@@ -14,6 +14,7 @@ import java.util.*;
 /**
  * Copy from <a href="https://github.com/mezz/JustEnoughItems/blob/1.16/src/main/java/mezz/jei/util/AnnotatedInstanceUtil.java">...</a>
  */
+@SuppressWarnings("rawtypes")
 public final class AnnotatedInstanceUtil {
 
     public static List<IEntityDialogueExtension> getModEntityExtensions() {

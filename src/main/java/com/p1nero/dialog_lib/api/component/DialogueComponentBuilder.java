@@ -40,15 +40,15 @@ public class DialogueComponentBuilder {
         return new DialogueComponentBuilder(name, modId);
     }
 
-    public MutableComponent buildDialogue(Entity entity, Component content) {
+    public static MutableComponent buildDialogue(Entity entity, Component content) {
         return Component.literal("[").append(entity.getDisplayName().copy().withStyle(ChatFormatting.YELLOW)).append("]:").append(content);
     }
 
-    public MutableComponent buildDialogue(EntityType<?> entity, Component content) {
+    public static MutableComponent buildDialogue(EntityType<?> entity, Component content) {
         return Component.literal("[").append(entity.getDescription().copy().withStyle(ChatFormatting.YELLOW)).append("]:").append(content);
     }
 
-    public MutableComponent buildDialogue(Entity entity, Component content, ChatFormatting... nameChatFormatting) {
+    public static MutableComponent buildDialogue(Entity entity, Component content, ChatFormatting... nameChatFormatting) {
         return Component.literal("[").append(entity.getDisplayName().copy().withStyle(nameChatFormatting)).append("]:").append(content).withStyle();
     }
 

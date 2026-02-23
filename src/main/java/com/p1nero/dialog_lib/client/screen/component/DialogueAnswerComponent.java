@@ -81,7 +81,7 @@ public class DialogueAnswerComponent {
 
     private void updateSplitLines(List<NpcDialogueElement> pSplitLine, Component message) {
         pSplitLine.clear();
-        List<FormattedCharSequence> list = Minecraft.getInstance().font.split(name.copy().append(message), 300);
+        List<FormattedCharSequence> list = Minecraft.getInstance().font.split(name.copy().append(message), DialogueLibConfig.DIALOG_WIDTH.get());
         this.height = list.size() * 12;
         list.forEach(text -> pSplitLine.add(new NpcDialogueElement(0, 0, 0, text)));
     }

@@ -31,12 +31,13 @@ import java.util.*;
 
 public class DialogueScreen extends Screen {
     protected String modId = "";
-    protected ResourceLocation PICTURE_LOCATION = null;
+    protected ResourceLocation pictureLocation = null;
     public static final int BACKGROUND_COLOR = 0xCC000000;
     public static final int BORDER_COLOR = 0xFFFFFFFF;
     private int picHeight = 144, picWidth = 256;
     private int picShowHeight = 144, picShowWidth = 256;
     private int yOffset = 0;
+    private int optionXOffset = 0;
     private float rate;
     private boolean isSilent;
     private int currentOptionsCount;
@@ -86,7 +87,7 @@ public class DialogueScreen extends Screen {
     }
 
     public void setPicture(ResourceLocation resourceLocation) {
-        this.PICTURE_LOCATION = resourceLocation;
+        this.pictureLocation = resourceLocation;
         if (Minecraft.getInstance().level != null && Minecraft.getInstance().player != null) {
             LocalPlayer player = Minecraft.getInstance().player;
             Minecraft.getInstance().level.playLocalSound(player.getX(), player.getY(), player.getZ(), SoundEvents.BOOK_PAGE_TURN, SoundSource.BLOCKS, 1.0F, 1.0F, false);
@@ -99,6 +100,10 @@ public class DialogueScreen extends Screen {
 
     public void setYOffset(int yOffset) {
         this.yOffset = yOffset;
+    }
+
+    public void setOptionXOffset(int optionXOffset) {
+        this.optionXOffset = optionXOffset;
     }
 
     public void setPicHeight(int picHeight) {
@@ -124,6 +129,22 @@ public class DialogueScreen extends Screen {
             this.addRenderableWidget(option);
         }
         this.positionDialogue();
+        this.resetOffset();
+    }
+
+    public void resetOffset() {
+        yOffset = 0;
+        optionXOffset = 0;
+    }
+
+    public void reset() {
+        pictureLocation = null;
+        yOffset = 0;
+        optionXOffset = 0;
+        picHeight = 144;
+        picWidth = 256;
+        picShowHeight = 256;
+        picShowWidth = 144;
     }
 
     /**
@@ -137,10 +158,13 @@ public class DialogueScreen extends Screen {
         }
     }
 
+    /**
+     * 按钮居中的风格
+     */
     protected void positionDialogue1() {
         rate = 5.0F / 4;
         // Dialogue answer.
-        this.dialogueAnswer.reposition(this.width, (int) (this.height * rate), yOffset);//相较于天堂的下移了一点，因为是中文
+        this.dialogueAnswer.reposition(this.width, (int) (this.height * rate), yOffset);
         // Dialogue choices.
         int lineNumber = this.dialogueAnswer.height / 12 + 1;
         Iterator<Renderable> iterator = this.renderables.iterator();
@@ -153,7 +177,8 @@ public class DialogueScreen extends Screen {
                 lineNumber++;
                 int h = option.getHeight() + 2;
                 if (!iterator.hasNext() && y + h > this.height && typewriterTimer < 0) {
-                    yOffset -= h;
+                    //防止超过屏幕
+                    yOffset -= 1;
                     this.dialogueAnswer.reposition(this.width, (int) (this.height * rate), yOffset);
                     y = (int) (this.height / 2.0 * rate + 12 * lineNumber + yOffset);
                     option.setY(y);//调低一点
@@ -162,19 +187,27 @@ public class DialogueScreen extends Screen {
         }
     }
 
+    /**
+     * 按钮右置的风格
+     */
     protected void positionDialogue2() {
-        // Dialogue answer.
         rate = 1.4F;
         this.dialogueAnswer.reposition(this.width, (int) (this.height * rate), yOffset);
         int answerBottomY = this.dialogueAnswer.getStartY() + this.dialogueAnswer.height;
+        //防止底下超过屏幕
         if(answerBottomY + 10 > this.height && typewriterTimer < 0){
-            yOffset -= 10;
+            yOffset -= 1;
         }
-        // Dialogue choices.
+
         int lineNumber = 0;
         for (Renderable renderable : this.renderables) {
             if (renderable instanceof DialogueOptionComponent option) {
-                option.setX(this.width / 2 + this.width / 6);
+                //防止选项右边超过屏幕
+                int x = this.width / 2 + this.width / 6;
+                if(x + option.getWidth() + 2 + optionXOffset > this.width) {
+                    optionXOffset = (this.width - (x + option.getWidth() + 2));
+                }
+                option.setX(x + optionXOffset);
                 int y = (int) (this.height / 2.0 * rate + 12 * lineNumber + yOffset - currentOptionsCount * 12);
                 option.setY(y);
                 lineNumber++;
@@ -201,12 +234,7 @@ public class DialogueScreen extends Screen {
             DialoguePacketRelay.sendToServer(DialoguePacketHandler.INSTANCE, new HandleNpcEntityPlayerInteractPacket(this.entity.getId(), interactionID));
         }
 
-        PICTURE_LOCATION = null;
-        yOffset = 0;
-        picHeight = 144;
-        picWidth = 256;
-        picShowHeight = 256;
-        picShowWidth = 144;
+        reset();
         super.onClose();
     }
 
@@ -254,6 +282,7 @@ public class DialogueScreen extends Screen {
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(guiGraphics);
         this.renderPicture(guiGraphics);
+        //每tick显示打字机效果太慢了= =
         if (DialogueLibConfig.ENABLE_TYPEWRITER_EFFECT.get() && typewriterTimer < 0) {
             this.dialogueAnswer.updateTypewriterDialogue();
             positionDialogue();
@@ -274,23 +303,17 @@ public class DialogueScreen extends Screen {
     }
 
     protected void renderPicture(GuiGraphics guiGraphics) {
-        if (PICTURE_LOCATION != null) {
-            guiGraphics.blit(PICTURE_LOCATION, this.width / 2 - picShowWidth / 2, (int) ((float) this.height / 2 - picShowHeight / 1.3F), picShowWidth, picShowHeight, 0, 0, picWidth, picHeight, picWidth, picHeight);
+        if (pictureLocation != null) {
+            guiGraphics.blit(pictureLocation, this.width / 2 - picShowWidth / 2, (int) ((float) this.height / 2 - picShowHeight / 1.3F), picShowWidth, picShowHeight, 0, 0, picWidth, picHeight, picWidth, picHeight);
         }
     }
 
     @Override
     public void renderBackground(@NotNull GuiGraphics guiGraphics) {
         if(DialogueLibConfig.ENABLE_BACKGROUND.get()) {
-            int tooltipHeight = dialogueAnswer.height + 10;
-            if(DialogueLibConfig.OPTION_IN_CENTER.get()) {
-                tooltipHeight += (currentOptionsCount + 1) * 12;
-            }
             int posY = (int) (this.height / 2.0 * rate + yOffset - 5);
-            int tooltipWidth = 340;
-            int posX = this.width / 2 - tooltipWidth / 2;
-
             if(DialogueLibConfig.FADED_BACKGROUND.get()) {
+                //渐变覆盖全部屏幕的黑底背景（性能耗费有点大hhh）
                 int gradientHeight = this.height - posY;
                 for (int i = 0; i < gradientHeight; i++) {
                     float progress = (float) i / gradientHeight;
@@ -302,8 +325,14 @@ public class DialogueScreen extends Screen {
                         guiGraphics.fill(0, currentY, this.width, currentY + 1, color);
                     }
                 }
-
             } else {
+                //普通边框背景
+                int tooltipHeight = dialogueAnswer.height + 10;
+                if(DialogueLibConfig.OPTION_IN_CENTER.get()) {
+                    tooltipHeight += (currentOptionsCount + 1) * 12;
+                }
+                int tooltipWidth = DialogueLibConfig.DIALOG_WIDTH.get() + 40;
+                int posX = this.width / 2 - tooltipWidth / 2;
                 guiGraphics.fill(posX, posY, posX + tooltipWidth, posY + tooltipHeight, BACKGROUND_COLOR);
                 guiGraphics.renderOutline(posX, posY, tooltipWidth, tooltipHeight, BORDER_COLOR);
             }

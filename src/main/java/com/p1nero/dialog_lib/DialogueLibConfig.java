@@ -13,18 +13,20 @@ public class DialogueLibConfig {
     public static final ForgeConfigSpec.BooleanValue ENABLE_TYPEWRITER_EFFECT;
     public static final ForgeConfigSpec.IntValue TYPEWRITER_EFFECT_SPEED;
     public static final ForgeConfigSpec.IntValue TYPEWRITER_EFFECT_INTERVAL;
+    public static final ForgeConfigSpec.IntValue DIALOG_WIDTH;
     static final ForgeConfigSpec SPEC;
 
     static{
         ForgeConfigSpec.Builder clientBuilder = new ForgeConfigSpec.Builder();
         OPTION_IN_CENTER = createBool(clientBuilder, "option_in_center", false, "[选项]是否居中");
-        ENABLE_BACKGROUND = createBool(clientBuilder, "enable_background", false, "是否开启[背景框]");
+        ENABLE_BACKGROUND = createBool(clientBuilder, "enable_background", true, "是否开启[背景框]");
         FADED_BACKGROUND = createBool(clientBuilder, "faded_background", true, "使用[渐变背景框]或[边框背景框]");
-        ENABLE_ANS_BACKGROUND = createBool(clientBuilder, "enable_ans_background", true, "是否绘制[回答]的背景");
-        ENABLE_OPT_BACKGROUND = createBool(clientBuilder, "enable_opt_background", true, "是否绘制[选项]的背景");
+        ENABLE_ANS_BACKGROUND = createBool(clientBuilder, "enable_ans_background", false, "是否绘制[回答]的背景");
+        ENABLE_OPT_BACKGROUND = createBool(clientBuilder, "enable_opt_background", false, "是否绘制[选项]的背景");
         ENABLE_TYPEWRITER_EFFECT = createBool(clientBuilder, "enable_typewriter_effect", true, "剧情对话是否使用[打字机效果]");
         TYPEWRITER_EFFECT_SPEED = createInt(clientBuilder, "typewriter_effect_speed", 2, 1, "[打字机效果]打字速度");
         TYPEWRITER_EFFECT_INTERVAL = createInt(clientBuilder, "typewriter_effect_interval", 2, 1, "[打字机效果]打字间隔");
+        DIALOG_WIDTH = createInt(clientBuilder, "dialog_width", 300, 100, "对话框宽度");
         SPEC = clientBuilder.build();
     }
 

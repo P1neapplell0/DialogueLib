@@ -122,6 +122,70 @@ public class DialogueScreenBuilder {
         return new DialogNode.FinalNode(builder.opt(opt), returnValue, consumer);
     }
 
+    public DialogNode newNode(Component ans) {
+        return new DialogNode(ans, Component.empty(), DialogNode.NOT_EXECUTE, null);
+    }
+
+    public DialogNode newNode(Component ans, Component opt) {
+        return new DialogNode(ans, opt, DialogNode.NOT_EXECUTE, null);
+    }
+
+    public DialogNode newNode(Component ans, Component opt, Consumer<DialogueScreen> consumer) {
+        return new DialogNode(ans, opt, DialogNode.NOT_EXECUTE, consumer);
+    }
+
+    public DialogNode newNode(Component ans, Component opt, int execute) {
+        return new DialogNode(ans, opt, execute, null);
+    }
+
+    public DialogNode newNode(Component ans, Component opt, int execute, Consumer<DialogueScreen> consumer) {
+        return new DialogNode(ans, opt, execute, consumer);
+    }
+
+    public DialogNode newFinalNode(Component opt) {
+        return newFinalNode(opt, 0, null);
+    }
+
+    public DialogNode newFinalNode(Component opt, int returnValue) {
+        return newFinalNode(opt, returnValue, null);
+    }
+
+    public DialogNode newFinalNode(Component opt, int returnValue, Consumer<DialogueScreen> consumer) {
+        return new DialogNode.FinalNode(opt, returnValue, consumer);
+    }
+
+    public DialogNode newNode(String ans) {
+        return newNode(Component.translatable(ans));
+    }
+
+    public DialogNode newNode(String ans, String opt) {
+        return newNode(Component.translatable(ans), Component.translatable(opt));
+    }
+
+    public DialogNode newNode(String ans, String opt, Consumer<DialogueScreen> consumer) {
+        return newNode(Component.translatable(ans), Component.translatable(opt), consumer);
+    }
+
+    public DialogNode newNode(String ans, String opt, int execute) {
+        return newNode(Component.translatable(ans), Component.translatable(opt), execute);
+    }
+
+    public DialogNode newNode(String ans, String opt, int execute, Consumer<DialogueScreen> consumer) {
+        return newNode(Component.translatable(ans), Component.translatable(opt), execute, consumer);
+    }
+
+    public DialogNode newFinalNode(String opt) {
+        return newFinalNode(Component.translatable(opt));
+    }
+
+    public DialogNode newFinalNode(String opt, int returnValue) {
+        return newFinalNode(Component.translatable(opt), returnValue);
+    }
+
+    public DialogNode newFinalNode(String opt, int returnValue, Consumer<DialogueScreen> consumer) {
+        return newFinalNode(Component.translatable(opt), returnValue, consumer);
+    }
+
     public DialogueComponentBuilder getComponentBuildr() {
         return builder;
     }
