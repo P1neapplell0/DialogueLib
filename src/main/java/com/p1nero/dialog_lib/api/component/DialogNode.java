@@ -60,10 +60,10 @@ public class DialogNode {
     }
 
     /**
-     * 默认的情况。负数不会被处理
+     * 默认的情况。0不会被处理
      */
     public DialogNode addLeaf(Component option) {
-        options.add(new FinalNode(option, -1));
+        options.add(new FinalNode(option, 0));
         return this;
     }
 
