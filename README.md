@@ -1,5 +1,7 @@
 ### For developer:
 
+wiki: [https://github.com/P1neapplell0/DialogueLib/wiki](https://github.com/P1neapplell0/DialogueLib/wiki)
+
 This mod provides a dialog support library that allows you to conveniently construct dialogues. Although it only features a few styles, it is fully functional.  
 You can:
 
@@ -11,17 +13,16 @@ You can:
 For **custom** entity usage examples, refer to:  
 [TuDiGong Entity](https://github.com/P1neapplell0/TuDiGong/blob/main/src/main/java/com/p1nero/tudigong/entity/TudiGongEntity.java)
 
-[ExampleEntity.java](https://github.com/P1neapplell0/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/entity/ExampleEntity.java)
 
 For **existing** entity usage examples, refer to:
 
-[IEntityDialogueExtension](https://github.com/P1neapplell0/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/api/IEntityDialogueExtension.java)
+[IEntityDialogueExtension](https://github.com/P1neapplell0/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/api/entity/IEntityDialogueExtension.java)
 
 [ReceptionistDialogExtension](https://github.com/P1neapplell0/BountifulNpc/blob/1.20.1/src/main/java/com/p1nero/bountiful_npc/dialog/ReceptionistDialogExtension.java)
 
 You can also use datagen to generate dialog translation:
 
-[ExampleLangProvider](https://github.com/P1neapplell0/DialogueLib/blob/master/src/main/java/com/p1nero/dialog_lib/data/ExampleLangProvider.java)
+[ExampleLangProvider](https://github.com/P1neapplell0/TCRCore/blob/master/src/main/java/com/p1nero/tcrcore/datagen/lang/TCRLangProvider.java#L23)
 
 This mod extends the Valkyrie dialogue system from TheAether, adding:
 
@@ -33,5 +34,3 @@ This mod extends the Valkyrie dialogue system from TheAether, adding:
 *   More api
 
 Licensed under GNU Lesser General Public License v3.0.
-
-[ValkyrieQueenDialogueScreen.java](https://github.com/The-Aether-Team/The-Aether/blob/1.20.1-develop/src/main/java/com/aetherteam/aether/client/gui/screen/ValkyrieQueenDialogueScreen.java)
