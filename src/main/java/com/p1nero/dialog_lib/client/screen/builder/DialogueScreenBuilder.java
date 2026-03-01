@@ -47,6 +47,7 @@ public class DialogueScreenBuilder {
         this.componentBuilder = new DialogueComponentBuilder(id.getPath(), id.getNamespace());
         this.defaultTitle = defaultTitle;
         this.customId = id;
+        this.modId = id.getNamespace();
     }
 
     public DialogueScreenBuilder(BlockState blockState, BlockPos pos, String modId) {
