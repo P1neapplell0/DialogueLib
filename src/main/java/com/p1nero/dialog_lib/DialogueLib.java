@@ -14,6 +14,7 @@ import com.p1nero.dialog_lib.network.packet.clientbound.NPCEntityDialoguePacket;
 import com.p1nero.dialog_lib.util.AnnotatedInstanceUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -43,6 +44,7 @@ public class DialogueLib {
 
     public static final String MOD_ID = "p1nero_dl";
     public static final Logger LOGGER = LogUtils.getLogger();
+    public static final ResourceLocation EMPTY = ResourceLocation.fromNamespaceAndPath(DialogueLib.MOD_ID, "empty");
     public static List<IEntityDialogueExtension> ENTITY_EXTENSIONS = Lists.newArrayList();
     public static Map<EntityType<?>, List<IEntityDialogueExtension>> ENTITY_EXTENSIONS_MAP = new HashMap<>();
     public static List<IBlockDialogueExtension> BLOCK_EXTENSIONS = Lists.newArrayList();

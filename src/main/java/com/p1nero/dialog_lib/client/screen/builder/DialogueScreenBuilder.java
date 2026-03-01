@@ -2,11 +2,14 @@ package com.p1nero.dialog_lib.client.screen.builder;
 
 import com.p1nero.dialog_lib.api.component.DialogueComponentBuilder;
 import com.p1nero.dialog_lib.api.component.DialogNode;
+import com.p1nero.dialog_lib.client.screen.BlockDialogueScreen;
 import com.p1nero.dialog_lib.client.screen.DialogueScreen;
+import com.p1nero.dialog_lib.client.screen.EntityDialogueScreen;
 import com.p1nero.dialog_lib.client.screen.component.DialogueOptionComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -31,36 +34,60 @@ public class DialogueScreenBuilder {
     protected BlockState blockState;
     @Nullable
     protected BlockPos pos;
-    protected DialogueComponentBuilder builder;
+    protected DialogueComponentBuilder componentBuilder;
     protected DialogNode root;
     protected DialogNode tempNode;
     protected String modId;
-    protected Function<String, ? extends DialogueScreen> constructor = DialogueScreen::new;
+    protected ResourceLocation customId;
+    protected Function<String, ? extends DialogueScreen> defaultConstructor = DialogueScreen::new;
+    protected Function<String, ? extends EntityDialogueScreen> entityDialogConstructor = EntityDialogueScreen::new;
+    protected Function<String, ? extends BlockDialogueScreen> blockDialogConstructor = BlockDialogueScreen::new;
 
-    public DialogueScreenBuilder(Component defaultTitle, String name, String modId) {
-        this.builder = new DialogueComponentBuilder(name, modId);
+    public DialogueScreenBuilder(Component defaultTitle, ResourceLocation id) {
+        this.componentBuilder = new DialogueComponentBuilder(id.getPath(), id.getNamespace());
         this.defaultTitle = defaultTitle;
-        this.modId = modId;
+        this.customId = id;
     }
 
     public DialogueScreenBuilder(BlockState blockState, BlockPos pos, String modId) {
-        this.builder = new DialogueComponentBuilder(blockState, modId);
+        this.componentBuilder = new DialogueComponentBuilder(blockState, modId);
         this.blockState = blockState;
         this.pos = pos;
         this.modId = modId;
     }
 
     public DialogueScreenBuilder(Entity entity, String modId) {
-        this.builder = new DialogueComponentBuilder(entity, modId);
+        this.componentBuilder = new DialogueComponentBuilder(entity, modId);
         this.entity = entity;
         this.modId = modId;
     }
 
     /**
+     * 特定标识符，无实体或无方块时使用
+     */
+    public void setCustomId(ResourceLocation customId) {
+        this.customId = customId;
+    }
+
+    /**
      * 可以设置用自己的窗口
      */
-    public void setConstructor(Function<String, ? extends DialogueScreen> constructor) {
-        this.constructor = constructor;
+    public void setDefaultConstructor(Function<String, ? extends DialogueScreen> defaultConstructor) {
+        this.defaultConstructor = defaultConstructor;
+    }
+
+    public void setEntityDialogConstructor(Function<String, ? extends EntityDialogueScreen> entityDialogConstructor) {
+        if(this.entity == null) {
+            throw new IllegalCallerException("Entity is null!");
+        }
+        this.entityDialogConstructor = entityDialogConstructor;
+    }
+
+    public void setBlockDialogConstructor(Function<String, ? extends BlockDialogueScreen> blockDialogConstructor) {
+        if(this.pos == null) {
+            throw new IllegalCallerException("Block is null!");
+        }
+        this.blockDialogConstructor = blockDialogConstructor;
     }
 
     /**
@@ -91,23 +118,23 @@ public class DialogueScreenBuilder {
     }
 
     public DialogNode newNode(int ans) {
-        return new DialogNode(builder.ans(ans), Component.empty(), DialogNode.NOT_EXECUTE, null);
+        return new DialogNode(componentBuilder.ans(ans), Component.empty(), DialogNode.NOT_EXECUTE, null);
     }
 
     public DialogNode newNode(int ans, int opt) {
-        return new DialogNode(builder.ans(ans), builder.opt(opt), DialogNode.NOT_EXECUTE, null);
+        return new DialogNode(componentBuilder.ans(ans), componentBuilder.opt(opt), DialogNode.NOT_EXECUTE, null);
     }
 
     public DialogNode newNode(int ans, int opt, Consumer<DialogueScreen> consumer) {
-        return new DialogNode(builder.ans(ans), builder.opt(opt), DialogNode.NOT_EXECUTE, consumer);
+        return new DialogNode(componentBuilder.ans(ans), componentBuilder.opt(opt), DialogNode.NOT_EXECUTE, consumer);
     }
 
     public DialogNode newNode(int ans, int opt, int execute) {
-        return new DialogNode(builder.ans(ans), builder.opt(opt), execute, null);
+        return new DialogNode(componentBuilder.ans(ans), componentBuilder.opt(opt), execute, null);
     }
 
     public DialogNode newNode(int ans, int opt, int execute, Consumer<DialogueScreen> consumer) {
-        return new DialogNode(builder.ans(ans), builder.opt(opt), execute, consumer);
+        return new DialogNode(componentBuilder.ans(ans), componentBuilder.opt(opt), execute, consumer);
     }
 
     public DialogNode newFinalNode(int opt) {
@@ -119,7 +146,7 @@ public class DialogueScreenBuilder {
     }
 
     public DialogNode newFinalNode(int opt, int returnValue, Consumer<DialogueScreen> consumer) {
-        return new DialogNode.FinalNode(builder.opt(opt), returnValue, consumer);
+        return new DialogNode.FinalNode(componentBuilder.opt(opt), returnValue, consumer);
     }
 
     public DialogNode newNode(Component ans) {
@@ -187,7 +214,7 @@ public class DialogueScreenBuilder {
     }
 
     public DialogueComponentBuilder getComponentBuildr() {
-        return builder;
+        return componentBuilder;
     }
 
     /**
@@ -203,18 +230,23 @@ public class DialogueScreenBuilder {
      */
     @Nullable
     public DialogueScreen build() {
-        screen = constructor.apply(modId);
+        screen = defaultConstructor.apply(modId);
         if (root == null) {
             return null;
         }
         if (entity != null) {
-            screen.setEntity(entity);
+            screen = entityDialogConstructor.apply(modId);
+            ((EntityDialogueScreen)screen).setEntity(entity);
         }
         if(pos != null && blockState != null) {
-            screen.setBlockState(blockState, pos);
+            screen = blockDialogConstructor.apply(modId);
+            ((BlockDialogueScreen)screen).setBlockState(blockState, pos);
         }
         if(customTitle != null) {
             screen.setCustomTitle(customTitle);
+        }
+        if(customId != null) {
+            screen.setId(customId);
         }
         screen.setDialogueAnswer(root.getAnswer());
         List<DialogueOptionComponent> choiceList = new ArrayList<>();
@@ -258,7 +290,7 @@ public class DialogueScreenBuilder {
                 if (node.getExecuteValue() == 0) {
                     throw new IllegalArgumentException("The return value '0' is used by default. and this will cause conservation stop!");
                 }
-                screen.execute(node.getExecuteValue());
+                screen.sendPacket(node.getExecuteValue());
             }
             screen.setDialogueAnswer(node.getAnswer());
             List<DialogueOptionComponent> choiceList = new ArrayList<>();

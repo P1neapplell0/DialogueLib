@@ -3,51 +3,40 @@ package com.p1nero.dialog_lib.client.screen;
 import com.p1nero.dialog_lib.DialogueLibConfig;
 import com.p1nero.dialog_lib.client.screen.component.DialogueAnswerComponent;
 import com.p1nero.dialog_lib.client.screen.component.DialogueOptionComponent;
-import com.p1nero.dialog_lib.mixin.MobInvoker;
 import com.p1nero.dialog_lib.network.DialoguePacketHandler;
 import com.p1nero.dialog_lib.network.DialoguePacketRelay;
 import com.p1nero.dialog_lib.network.packet.serverbound.HandleCustomInteractPacket;
-import com.p1nero.dialog_lib.network.packet.serverbound.HandleNpcBlockPlayerInteractPacket;
-import com.p1nero.dialog_lib.network.packet.serverbound.HandleNpcEntityPlayerInteractPacket;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
 public class DialogueScreen extends Screen {
-    protected String modId = "";
+    protected String modId;
+    protected ResourceLocation id;
     protected ResourceLocation pictureLocation = null;
     public static final int BACKGROUND_COLOR = 0xCC000000;
     public static final int BORDER_COLOR = 0xFFFFFFFF;
-    private int picHeight = 144, picWidth = 256;
-    private int picShowHeight = 144, picShowWidth = 256;
-    private int yOffset = 0;
-    private int optionXOffset = 0;
-    private float rate;
-    private boolean isSilent;
-    private int currentOptionsCount;
+    protected int picHeight = 144, picWidth = 256;
+    protected int picShowHeight = 144, picShowWidth = 256;
+    protected int yOffset = 0;
+    protected int optionXOffset = 0;
+    protected float rate;
+    protected boolean isSilent;
+    protected int currentOptionsCount;
     protected DialogueAnswerComponent dialogueAnswer;
-    @Nullable
-    protected Entity entity;
-    @Nullable
-    protected BlockPos pos;
     public final int typewriterInterval;
-    private int typewriterTimer = 0;
+    protected int typewriterTimer = 0;
 
     public DialogueScreen(String modId) {
         super(Component.empty());
@@ -56,22 +45,16 @@ public class DialogueScreen extends Screen {
         this.dialogueAnswer = new DialogueAnswerComponent(Component.empty());
     }
 
-    public void setEntity(@NotNull Entity entity) {
-        this.dialogueAnswer = new DialogueAnswerComponent(this.buildDialogueAnswerName(entity.getDisplayName()).append(": "));
-        this.entity = entity;
-    }
-
-    public void setBlockState(BlockState blockState, BlockPos pos) {
-        this.dialogueAnswer = new DialogueAnswerComponent(this.buildDialogueAnswerName(blockState.getBlock().getName()).append(": "));
-        this.pos = pos;
-    }
-
     public void setCustomTitle(Component customTitle) {
         this.dialogueAnswer = new DialogueAnswerComponent(customTitle);
     }
 
     public void setModId(String modId) {
         this.modId = modId;
+    }
+
+    public void setId(ResourceLocation id) {
+        this.id = id;
     }
 
     /**
@@ -225,15 +208,7 @@ public class DialogueScreen extends Screen {
     }
 
     public void finishChat(int interactionID) {
-        if (pos != null) {
-            DialoguePacketRelay.sendToServer(DialoguePacketHandler.INSTANCE, new HandleNpcBlockPlayerInteractPacket(pos, interactionID));
-        }
-        if (entity == null) {
-            DialoguePacketRelay.sendToServer(DialoguePacketHandler.INSTANCE, new HandleCustomInteractPacket(modId, interactionID));
-        } else {
-            DialoguePacketRelay.sendToServer(DialoguePacketHandler.INSTANCE, new HandleNpcEntityPlayerInteractPacket(this.entity.getId(), interactionID));
-        }
-
+        sendPacket(interactionID);
         reset();
         super.onClose();
     }
@@ -241,20 +216,15 @@ public class DialogueScreen extends Screen {
     /**
      * 默认对话翻页的时候播放声音
      */
-    public void playSound() {
-        if (this.isSilent || this.entity == null) {
-            return;
-        }
-        if (this.entity instanceof Mob mob && ((MobInvoker) mob).dialog_lib$invokeGetAmbientSound() != null) {
-            mob.level().playLocalSound(mob.getX(), mob.getY(), mob.getZ(), ((MobInvoker) mob).dialog_lib$invokeGetAmbientSound(), mob.getSoundSource(), 1.0F, 1.0F, false);
-        }
+    protected void playSound() {
+
     }
 
     /**
      * 发包但不关闭窗口
      */
-    public void execute(int interactionID) {
-        DialoguePacketRelay.sendToServer(DialoguePacketHandler.INSTANCE, new HandleNpcEntityPlayerInteractPacket(this.entity == null ? HandleNpcEntityPlayerInteractPacket.NO_ENTITY : this.entity.getId(), interactionID));
+    public void sendPacket(int interactionID) {
+        DialoguePacketRelay.sendToServer(DialoguePacketHandler.INSTANCE, new HandleCustomInteractPacket(id, interactionID));
     }
 
     /**

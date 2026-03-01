@@ -5,6 +5,7 @@ import com.p1nero.dialog_lib.api.entity.custom.IEntityNpc;
 import com.p1nero.dialog_lib.client.screen.DialogueScreen;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,8 +18,8 @@ import java.util.function.Consumer;
  */
 public class StreamDialogueScreenBuilder extends DialogueScreenBuilder {
 
-    public StreamDialogueScreenBuilder(Component defaultTitle, String name, String modId) {
-        super(defaultTitle, name, modId);
+    public StreamDialogueScreenBuilder(Component defaultTitle, ResourceLocation id) {
+        super(defaultTitle, id);
     }
 
     public StreamDialogueScreenBuilder(BlockState blockState, BlockPos pos, String modId) {
@@ -58,19 +59,19 @@ public class StreamDialogueScreenBuilder extends DialogueScreenBuilder {
      * @param greeting 初始时显示的话的编号
      */
     public StreamDialogueScreenBuilder start(int greeting) {
-        return start(builder.ans(greeting));
+        return start(componentBuilder.ans(greeting));
     }
 
     public StreamDialogueScreenBuilder start(int greeting, int executeValue) {
-        return start(builder.ans(greeting), executeValue);
+        return start(componentBuilder.ans(greeting), executeValue);
     }
 
     public StreamDialogueScreenBuilder start(int greeting, Consumer<DialogueScreen> screenConsumer) {
-        return start(builder.ans(greeting), screenConsumer);
+        return start(componentBuilder.ans(greeting), screenConsumer);
     }
 
     public StreamDialogueScreenBuilder start(int greeting, int executeValue, Consumer<DialogueScreen> screenConsumer) {
-        return start(builder.ans(greeting), executeValue, screenConsumer);
+        return start(componentBuilder.ans(greeting), executeValue, screenConsumer);
     }
 
     /**
@@ -104,15 +105,15 @@ public class StreamDialogueScreenBuilder extends DialogueScreenBuilder {
      * @param returnValue 选项的返回值，默认返回0。用于处理 {@link IEntityNpc#handleNpcInteraction(ServerPlayer, int)}
      */
     public StreamDialogueScreenBuilder addFinalOption(int finalOption, int returnValue) {
-        return addFinalOption(builder.opt(finalOption), returnValue);
+        return addFinalOption(componentBuilder.opt(finalOption), returnValue);
     }
 
     public StreamDialogueScreenBuilder addFinalOption(int finalOption, int returnValue, Consumer<DialogueScreen> screenConsumer) {
-        return addFinalOption(builder.opt(finalOption), returnValue, screenConsumer);
+        return addFinalOption(componentBuilder.opt(finalOption), returnValue, screenConsumer);
     }
 
     public StreamDialogueScreenBuilder addFinalOption(int finalOption, Consumer<DialogueScreen> screenConsumer) {
-        return addFinalOption(builder.opt(finalOption), screenConsumer);
+        return addFinalOption(componentBuilder.opt(finalOption), screenConsumer);
     }
 
     public StreamDialogueScreenBuilder addFinalOption(int finalOption) {
@@ -155,7 +156,7 @@ public class StreamDialogueScreenBuilder extends DialogueScreenBuilder {
      * 辅助构建 实体id + mod id + 编号的翻译键
      */
     public StreamDialogueScreenBuilder addOption(int option, int answer, int executeValue, Consumer<DialogueScreen> screenConsumer) {
-        return addOption(builder.opt(option), builder.ans(answer), executeValue, screenConsumer);
+        return addOption(componentBuilder.opt(option), componentBuilder.ans(answer), executeValue, screenConsumer);
     }
 
     public StreamDialogueScreenBuilder addOption(int option, int answer, Consumer<DialogueScreen> screenConsumer) {
