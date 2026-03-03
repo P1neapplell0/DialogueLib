@@ -11,6 +11,7 @@ public class DialogueLibConfig {
     public static final ForgeConfigSpec.BooleanValue ENABLE_ANS_BACKGROUND;
     public static final ForgeConfigSpec.BooleanValue ENABLE_OPT_BACKGROUND;
     public static final ForgeConfigSpec.BooleanValue ENABLE_TYPEWRITER_EFFECT;
+    public static final ForgeConfigSpec.BooleanValue DISABLE_HUD_IN_DIALOG;
     public static final ForgeConfigSpec.IntValue TYPEWRITER_EFFECT_SPEED;
     public static final ForgeConfigSpec.IntValue TYPEWRITER_EFFECT_INTERVAL;
     public static final ForgeConfigSpec.IntValue DIALOG_WIDTH;
@@ -18,6 +19,7 @@ public class DialogueLibConfig {
 
     static{
         ForgeConfigSpec.Builder clientBuilder = new ForgeConfigSpec.Builder();
+        DISABLE_HUD_IN_DIALOG = createBool(clientBuilder, "disable_hud_in_dialog", true, "是否在对话时隐藏[HUD]");
         OPTION_IN_CENTER = createBool(clientBuilder, "option_in_center", false, "[选项]是否居中");
         ENABLE_BACKGROUND = createBool(clientBuilder, "enable_background", true, "是否开启[背景框]");
         FADED_BACKGROUND = createBool(clientBuilder, "faded_background", true, "使用[渐变背景框]或[边框背景框]");
